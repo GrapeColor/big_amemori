@@ -27,7 +27,8 @@ bot.on('ready', () => {
       type: 'WATCHING',
       name: 'YOU',
     }
-  });
+  })
+    .catch(console.error);
 });
 
 bot.on('message', message => parseCommand(message, myWebhook));
