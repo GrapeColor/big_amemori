@@ -1,4 +1,5 @@
 import Discord from 'discord.js';
+import replaceAsync  from 'string-replace-async';
 
 /**
  * @typedef {Object} MessageDesign
@@ -69,6 +70,32 @@ const fetchMessages = async (channel, startID, endID) => {
 }
 
 /**
+ * Disable mentions in a string.
+ * @param {Discord.Message} message - Will be disabled from a message.
+ * @returns {Promise<string>} - Disabled message.
+ */
+const disableMentions = async message => {
+  const client = message.client;
+  const guild  = message.guild;
+  let result   = message.content;
+
+  result = await replaceAsync(
+    result, /(?<!\\)<@!?(\d+)>/g,
+    async (match, id) => {
+      const user = await client.users.fetch(id);
+      return user ? `@${user.username}` : match;
+    }
+  );
+
+  if (guild) result = result.replace(/(?<!\\)<@&(\d+)>/g, (match, id) => {
+    const role = guild.roles.cache.get(id);
+    return role ? `@${role.name}` : match;
+  });
+
+  return result;
+}
+
+/**
  * Use a webhook to transfer messages.
  * @param {Discord.Webhook} webhook - A webhook used for transfer.
  * @param {Discord.Message} message - A message to transfer.
@@ -76,14 +103,15 @@ const fetchMessages = async (channel, startID, endID) => {
  */
 const transferMessage = async (webhook, message) => {
   const user = message.author;
+  const content = await disableMentions(message);
   const attachmentURLs = message.attachments.map(attachment => attachment.url);
 
-  return await webhook.send(message.content, {
+  return await webhook.send(content, {
     username       : user.username,
     avatarURL      : user.displayAvatarURL(),
     embeds         : message.embeds,
-    files          : attachmentURLs,
     disableMentions: 'all',
+    files          : attachmentURLs,
   });
 }
 
