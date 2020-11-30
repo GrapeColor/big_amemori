@@ -32,5 +32,5 @@ bot.on('ready', () => {
 
 bot.on('message', message => parseCommand(message, myWebhook));
 
-bot.login()
+bot.login(process.env['BIG_AMEMORI_TOKEN'])
   .catch(console.error);
