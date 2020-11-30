@@ -3,7 +3,7 @@ services:
   bot: 
     build: .
     environment: 
-      - DISCORD_TOKEN
+      - BIG_AMEMORI_TOKEN
       - TWITTER_CONSUMER_KEY
       - TWITTER_CONSUMER_SECRET
       - TWITTER_ACCESS_TOKEN
