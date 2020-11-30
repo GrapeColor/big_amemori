@@ -1,6 +1,7 @@
 import Discord from 'discord.js';
 
 import { initAnnouncers } from './announcers.js';
+import { initReactionRouter } from './routers/reaction.js'
 import { parseCommand } from './commands.js';
 import * as Util from './util.js';
 
@@ -13,6 +14,7 @@ let myWebhook;
 
 bot.once('ready', () => {
   initAnnouncers(bot);
+  initReactionRouter(bot);
 
   Util.fetchMyWebhook(bot)
     .then(webhook => myWebhook = webhook)

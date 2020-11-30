@@ -33,11 +33,17 @@ const validateReaction = async (add, reaction, user) => {
  * @param {Client} bot - A client to which the reaction router belongs.
  */
 export const initReactionRouter = bot => {
-  bot.on('messageReactionAdd', (reaction, user) => {
-    validateReaction(true,  reaction, user)
-      .catch(console.error);
+  bot.on(
+    'messageReactionAdd',
+    (reaction, user) =>
+      validateReaction(true, reaction, user)
+        .catch(console.error)
+  );
 
-    validateReaction(false, reaction, user)
-      .catch(console.error);
-  });
+  bot.on(
+    'messageReactionRemove',
+    (reaction, user) =>
+      validateReaction(false, reaction, user)
+        .catch(console.error)
+  );
 }
