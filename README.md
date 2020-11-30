@@ -7,7 +7,7 @@
 ## 運用方法
 DiscordとTwitterのAPIを使用しているため、以下の5つの環境変数を設定する必要があります。  
 
-- DISCORD_TOKEN
+- BIG_AMEMORI_TOKEN
 - TWITTER_CONSUMER_KEY
 - TWITTER_CONSUMER_SECRET
 - TWITTER_ACCESS_TOKEN
