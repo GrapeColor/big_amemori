@@ -27,7 +27,7 @@ bot.on('ready', () => {
   bot.user?.setPresence({
     activity: {
       type: 'WATCHING',
-      name: 'AUTOMATIC DEPLOY',
+      name: 'YOU',
     }
   })
     .catch(console.error);
