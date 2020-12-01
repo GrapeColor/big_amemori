@@ -20,4 +20,4 @@ jobs:
           config: ${{ secrets.CONFIG }}
 
       - name: Update bot
-        run: ssh raspberrypi "sudo /home/discord/bots/update_big_amemori.sh"
+        run: ssh raspberrypi "/home/discord/bots/update_big_amemori.sh"
