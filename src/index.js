@@ -36,4 +36,5 @@ bot.on('ready', () => {
 bot.on('message', message => parseCommand(message, myWebhook));
 
 bot.login(process.env['BIG_AMEMORI_TOKEN'])
+  .then(() => process.on('SIGTERM', bot.destroy))
   .catch(console.error);
