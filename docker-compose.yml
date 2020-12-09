@@ -1,8 +1,8 @@
 version: '3'
-services: 
-  bot: 
+services:
+  bot:
     build: .
-    environment: 
+    environment:
       - BIG_AMEMORI_TOKEN
       - TWITTER_CONSUMER_KEY
       - TWITTER_CONSUMER_SECRET

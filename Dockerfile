@@ -1,10 +1,10 @@
 FROM node:14
 
-WORKDIR /discord_bot/big_amemori
+WORKDIR /app/big_amemori
 
 COPY package*.json ./
-RUN npm i
+RUN npm ci
 
 COPY . .
 
-CMD [ "npm", "start" ]
+CMD [ "node", "src/index.js" ]
