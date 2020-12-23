@@ -1,5 +1,5 @@
 import Discord from 'discord.js';
-import replaceAsync  from 'string-replace-async';
+import replaceAsync from 'string-replace-async';
 
 /**
  * @typedef {Object} MessageDesign
@@ -22,9 +22,8 @@ const messageDesigns = {
  * @param {string} type - A type of a message.
  * @returns {MessageDesign}
  */
-const getMessageDesign = type => {
-  return (type in messageDesigns) ? messageDesigns[type] : messageDesigns.success;
-}
+const getMessageDesign = type =>
+  (type in messageDesigns) ? messageDesigns[type] : messageDesigns.success;
 
 /**
  * Sends an infomation message to the channel.
@@ -76,8 +75,8 @@ const fetchMessages = async (channel, startID, endID) => {
  */
 const disableMentions = async message => {
   const client = message.client;
-  const guild  = message.guild;
-  let result   = message.content;
+  const guild = message.guild;
+  let result = message.content;
 
   result = await replaceAsync(
     result, /(?<!\\)<@!?(\d+)>/g,
@@ -116,11 +115,29 @@ const transferMessage = async (webhook, message) => {
 }
 
 /**
+ * Get a webhook from the guild.
+ * @param {Discord.Guild} guild - The guild that gets a webhook.
+ * @param {Discord.TextChannel} channel - The channel to set for the webhook.
+ */
+const fetchWebhook = async (guild, channel) => {
+  const bot = guild.client;
+  const webhooks = await guild.fetchWebhooks();
+  const webhook = webhooks.find(webhook => webhook.owner.id === bot.user?.id);
+
+  if (webhook) {
+    return webhook.channelID === channel.id
+      ? webhook : await webhook.edit({ channel: channel.id });
+  }
+  else {
+    return await channel.createWebhook();
+  }
+}
+
+/**
  * Copy multiple messages to another channel.
  * @param {Discord.Message} command - A message containing a command string.
- * @param {Discord.Webhook} webhook - A webhook used to transfer messages.
  */
-const messagesCopy = async (command, webhook) => {
+const messagesCopy = async command => {
   const fromChannel = command.channel;
   if (!fromChannel.isText()) return;
 
@@ -138,7 +155,8 @@ const messagesCopy = async (command, webhook) => {
   const [_, toChannelID, fromMessageID, toMessageID] = matchCommand;
 
   const toChannel = fromChannel.client.channels.cache.get(toChannelID);
-  if (toChannel.type !== 'text' || webhook.guildID !== toChannel.guild?.id) {
+  if (toChannel.type !== 'text'
+    || fromChannel.guild?.id !== toChannel.guild?.id) {
     sendInformation(
       fromChannel, 'failure', '送信できないチャンネルです',
       '送信先のチャンネルはサーバー内のテキストチャンネルである必要があります'
@@ -146,9 +164,7 @@ const messagesCopy = async (command, webhook) => {
     return;
   }
 
-  if (webhook.channelID !== toChannelID)
-    await webhook.edit({ channel: toChannelID });
-
+  const webhook = await fetchWebhook(toChannel.guild, toChannel);
   let messages = await fetchMessages(fromChannel, fromMessageID, toMessageID);
 
   sendInformation(
@@ -220,29 +236,26 @@ const messagesDelete = async command => {
   );
 
   deleteMessages(channel, messages)
-    .then(
-      () => sendInformation(channel, 'success', 'メッセージの一斉削除に成功しました')
-    )
-    .catch(
-      () => sendInformation(channel, 'failure', 'メッセージの一斉削除に失敗しました')
-    );
+    .then(() => {
+      sendInformation(channel, 'success', 'メッセージの一斉削除に成功しました');
+    })
+    .catch(() => {
+      sendInformation(channel, 'failure', 'メッセージの一斉削除に失敗しました');
+    });
 }
 
 /**
  * Parses a command in a message.
  * @param {Discord.Message} message - A message containing a command string.
- * @param {Discord.Webhook} webhook - A webhook used to process commands.
  */
-export const parseCommand = (message, webhook) => {
+export const parse = message => {
   if (!message.member?.hasPermission('ADMINISTRATOR')) return;
 
   const content = message.content;
 
-  if (content.startsWith('admin/copy'))
-    messagesCopy(message, webhook)
-      .catch(console.error);
+  if (content.startsWith('admin/copy')) messagesCopy(message)
+    .catch(console.error);
 
-  if (content.startsWith('admin/delete'))
-    messagesDelete(message)
-      .catch(console.error);
+  if (content.startsWith('admin/delete')) messagesDelete(message)
+    .catch(console.error);
 }

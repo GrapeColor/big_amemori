@@ -1,40 +1,49 @@
-import Discord from 'discord.js';
+import { Client, Intents } from 'discord.js';
 
-import { initAnnouncers } from './announcers.js';
-import { initReactionRouter } from './routers/reaction.js'
-import { parseCommand } from './commands.js';
-import * as Util from './util.js';
+import * as Logger from './logger.js';
+import * as Announcers from './announcers.js';
+import * as ReactionRouter from './routers/reaction.js';
+import * as Join from './join.js';
+import * as Command from './commands.js';
 
-const bot = new Discord.Client({
-  ws: { intents: Discord.Intents.NON_PRIVILEGED },
+const bot = new Client({
+  ws: { intents: Intents.ALL & ~Intents.FLAGS.GUILD_PRESENCES },
   partials: ['USER', 'CHANNEL', 'GUILD_MEMBER', 'MESSAGE', 'REACTION'],
 });
 
-let myWebhook;
-
 bot.once('ready', () => {
-  initAnnouncers(bot);
-  initReactionRouter(bot);
-
-  Util.fetchMyWebhook(bot)
-    .then(webhook => myWebhook = webhook)
-    .catch(console.error);
+  Logger.initialize(bot);
+  Announcers.initialize(bot);
+  ReactionRouter.initialize(bot);
 });
 
 bot.on('ready', () => {
-  console.info(`BIG AMEMORI has (re)logged in to Discord at ${bot.readyAt}.`)
+  console.info(`BIG AMEMORI has (re)logged in to Discord at ${bot.readyAt}.`);
 
-  bot.user?.setPresence({
-    activity: {
-      type: 'WATCHING',
-      name: 'YOU',
-    }
-  })
+  bot.user?.setPresence({ activity: { type: 'WATCHING', name: 'YOU' } })
     .catch(console.error);
 });
 
-bot.on('message', message => parseCommand(message, myWebhook));
+bot.on('message', message => {
+  switch (message.type) {
+    case 'DEFAULT':
+      Command.parse(message);
+      break;
+    case 'GUILD_MEMBER_JOIN':
+      Join.giveRole(message);
+      break;
+    default:
+      break;
+  }
+});
 
 bot.login(process.env['BIG_AMEMORI_TOKEN'])
-  .then(() => process.on('SIGTERM', bot.destroy))
   .catch(console.error);
+
+process.on('exit', () => {
+  bot.destroy();
+  console.info('BIG AMEMORI has logged out of Discord.');
+});
+
+process.on('SIGTERM', () => process.exit(0));
+process.on('SIGINT',  () => process.exit(0));

@@ -26,7 +26,7 @@ const announce = (channel, urls) => {
  * Initialize announcers for each channel.
  * @param {Client} bot - A bot with a channel to set an announcer.
  */
-export const initAnnouncers = bot => {
+export const initialize = bot => {
   const channels = bot.channels.cache;
 
   const youtubeChannel  = channels.find(channel => /<YouTube>/.test(channel.topic));
