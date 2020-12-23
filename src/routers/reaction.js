@@ -3,9 +3,10 @@ import * as Roles from '../roles.js';
 
 /**
  * Branch processing based on the label.
- * @param {string} label 
+ * @param {string} label - Base label.
+ * @param {boolean} add - Whether to add.
  */
-const router = async label => {
+const router = async (label, add) => {
   switch (label) {
     case '独房案内':
       if (add) await Roles.addModelPrisoner(member);
