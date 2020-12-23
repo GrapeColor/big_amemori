@@ -1,12 +1,13 @@
-import { Client, User, MessageReaction } from 'discord.js';
+import { Client, User, MessageReaction, GuildMember } from 'discord.js';
 import * as Roles from '../roles.js';
 
 /**
  * Branch processing based on the label.
  * @param {string} label - Base label.
  * @param {boolean} add - Whether to add.
+ * @param {GuildMember} - A member who reacted.
  */
-const router = async (label, add) => {
+const router = async (label, add, member) => {
   switch (label) {
     case '独房案内':
       if (add) await Roles.addModelPrisoner(member);
@@ -30,11 +31,11 @@ const validateReaction = async (add, reaction, user) => {
   const botUser = user.client.user;
   if (message.author.id !== botUser?.id) return;
 
-  const member = message.guild?.member(user);
+  const member = await message.guild?.members.fetch(user);
   if (!member) return;
 
   const label = message.embeds[0].footer.text;
-  if (label) await router(label);
+  if (label) await router(label, add, member);
 }
 
 /**
