@@ -19,7 +19,7 @@ const getRole = (guild, roleName) => {
  */
 export const addPrisoner = async member => {
   const role = getRole(member.guild, prisonerName);
-  role && await member.roles.add(role);
+  if (role) await member.roles.add(role);
 }
 
 /**
@@ -28,7 +28,7 @@ export const addPrisoner = async member => {
  */
 export const removePrisoner = async member => {
   const role = getRole(member.guild, prisonerName);
-  role && await member.roles.remove(role);
+  if (role) await member.roles.remove(role);
 }
 
 /**
@@ -37,7 +37,7 @@ export const removePrisoner = async member => {
  */
 export const addModelPrisoner = async member => {
   const role = getRole(member.guild, modelPrisonerName);
-  role && await member.roles.add(role);
+  if (role) await member.roles.add(role);
 }
 
 /**
@@ -46,5 +46,5 @@ export const addModelPrisoner = async member => {
  */
 export const removeModelPrisoner = async member => {
   const role = getRole(member.guild, modelPrisonerName);
-  role && await member.roles.remove(role)
+  if (role) await member.roles.remove(role);
 }
