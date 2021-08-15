@@ -3,7 +3,7 @@ FROM node:14
 WORKDIR /app/big_amemori
 
 COPY package*.json ./
-RUN npm ci
+RUN [ "npm", "ci", "--production" ]
 
 COPY . .
 
