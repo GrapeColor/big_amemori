@@ -1,7 +1,6 @@
 import { Client, Intents } from 'discord.js';
 
 import * as Announcers from './announcers.js';
-import * as Join from './join.js';
 import * as Command from './commands.js';
 
 const bot = new Client({
@@ -24,9 +23,6 @@ bot.on('message', message => {
   switch (message.type) {
     case 'DEFAULT':
       Command.parse(message);
-      break;
-    case 'GUILD_MEMBER_JOIN':
-      Join.giveRole(message);
       break;
     default:
       break;
