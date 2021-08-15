@@ -1,6 +1,5 @@
 import { Client, Intents } from 'discord.js';
 
-import * as Logger from './logger.js';
 import * as Announcers from './announcers.js';
 import * as ReactionRouter from './routers/reaction.js';
 import * as Join from './join.js';
