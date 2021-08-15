@@ -1,7 +1,6 @@
 import { Client, Intents } from 'discord.js';
 
 import * as Announcers from './announcers.js';
-import * as ReactionRouter from './routers/reaction.js';
 import * as Join from './join.js';
 import * as Command from './commands.js';
 
@@ -11,9 +10,7 @@ const bot = new Client({
 });
 
 bot.once('ready', () => {
-  Logger.initialize(bot);
   Announcers.initialize(bot);
-  ReactionRouter.initialize(bot);
 });
 
 bot.on('ready', () => {
