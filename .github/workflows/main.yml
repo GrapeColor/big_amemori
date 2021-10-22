@@ -6,9 +6,6 @@ on:
       - main
       
   workflow_dispatch:
-  
-env:
-  IMAGE_NAME: ghcr.io/$(echo ${{ github.repository }} | tr '[A-Z]' '[a-z]')
 
 jobs:
 
@@ -19,6 +16,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        
+      - name: set IMAGE_NAME
+        run: echo ghcr.io/${{ github.repository }} | tr A-Z a-z >> $GITHUB_ENV
 
       - name: Display IMAGE_NAME
         run: echo $IMAGE_NAME
