@@ -6,6 +6,9 @@ on:
       - main
       
   workflow_dispatch:
+  
+env:
+  IMAGE_NAME: ghcr.io/$(echo ${{ github.repository }} | tr A-Z a-z)
 
 jobs:
 
@@ -17,5 +20,5 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: List home directory files
-        run: ls -la
+      - name: Display IMAGE_NAME
+        run: echo $IMAGE_NAME
